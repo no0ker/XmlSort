@@ -33,17 +33,20 @@ public class XmlSort {
         Document doc = dBuilder.parse(file);
 
 
-
         NodeList messages = doc.getChildNodes().item(0).getChildNodes();
 
-        for (int i = 0; i < messages.getLength(); i++) {
-                Node node = messages.item(i);
-                if(StringUtils.isNotEmpty(getMessageName(node))){
-                    resultNodes.add(node);
-                    doc.getChildNodes().item(0).removeChild(node);
-                }
+
+        while(messages.getLength() > 0) {
+            Node node = messages.item(0);
+            if (StringUtils.isNotEmpty(getMessageName(node))) {
+                resultNodes.add(node);
+            }
+            doc.getChildNodes().item(0).removeChild(node);
             System.out.println(getMessageName(node));
         }
+
+
+
 
         Collections.sort(resultNodes, new Comparator<Node>() {
             public int compare(Node o1, Node o2) {
@@ -63,13 +66,16 @@ public class XmlSort {
         return resultNodes;
     }
 
-    public static String getMessageName(Node node){
+    public static String getMessageName(Node node) {
+        if(!"message".equals(node.getNodeName())){
+            return "";
+        }
         NamedNodeMap nameNodeMap;
-        if((nameNodeMap = node.getAttributes()) == null){
+        if ((nameNodeMap = node.getAttributes()) == null) {
             return "";
         }
         Node parameterNode;
-        if((parameterNode = nameNodeMap.getNamedItem("name")) == null){
+        if ((parameterNode = nameNodeMap.getNamedItem("name")) == null) {
             return "";
         }
 
